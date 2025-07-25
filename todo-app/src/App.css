@@ -27,6 +27,12 @@
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 1rem;
+  transition: box-shadow 0.2s, border 0.2s;
+}
+.todo-input:focus {
+  border: 1.5px solid #61dafb;
+  box-shadow: 0 0 0 2px #e3f7fd;
+  outline: none;
 }
 
 .add-btn {
@@ -37,10 +43,11 @@
   border-radius: 6px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
 }
 .add-btn:hover {
   background: #21a1f3;
+  transform: scale(1.07);
 }
 
 .filters {
@@ -48,6 +55,7 @@
   justify-content: center;
   gap: 8px;
   margin-bottom: 18px;
+  transition: all 0.3s;
 }
 .filters button {
   background: #f3f3f3;
@@ -57,11 +65,12 @@
   cursor: pointer;
   color: #333;
   font-size: 1rem;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
 }
 .filters button.active, .filters button:hover {
   background: #61dafb;
   color: #fff;
+  transform: translateY(-2px) scale(1.08);
 }
 
 .todo-list {
@@ -76,19 +85,39 @@
   padding: 10px 0;
   border-bottom: 1px solid #f0f0f0;
   font-size: 1.08rem;
-  transition: background 0.2s;
-}
-.todo-list li:last-child {
-  border-bottom: none;
+  transition: background 0.2s, color 0.2s, opacity 0.3s, transform 0.3s;
+  opacity: 1;
+  animation: fadeIn 0.4s;
 }
 .todo-list li.completed .todo-text {
   text-decoration: line-through;
   color: #aaa;
+  transition: color 0.3s, text-decoration 0.3s;
+}
+.todo-list li.removing {
+  opacity: 0;
+  transform: translateX(40px) scale(0.95);
+  transition: opacity 0.3s, transform 0.3s;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 .todo-text {
   flex: 1;
   cursor: pointer;
   text-align: left;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+.todo-text:hover {
+  color: #21a1f3;
+  text-shadow: 0 1px 6px #e3f7fd;
 }
 .delete-btn {
   background: none;
@@ -97,13 +126,15 @@
   font-size: 1.2rem;
   cursor: pointer;
   margin-left: 10px;
-  transition: color 0.2s;
+  transition: color 0.2s, transform 0.15s;
 }
 .delete-btn:hover {
   color: #c62828;
+  transform: scale(1.2) rotate(12deg);
 }
 .empty {
   color: #bbb;
   text-align: center;
   padding: 18px 0;
+  animation: fadeIn 0.4s;
 }

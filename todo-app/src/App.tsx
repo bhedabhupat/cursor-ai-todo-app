@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
 interface Todo {
@@ -15,6 +15,8 @@ function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [input, setInput] = useState('');
   const [filter, setFilter] = useState<Filter>('all');
+  const [removingId, setRemovingId] = useState<number | null>(null);
+  const removeTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -24,6 +26,12 @@ function App() {
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos));
   }, [todos]);
+
+  useEffect(() => {
+    return () => {
+      if (removeTimeout.current) clearTimeout(removeTimeout.current);
+    };
+  }, []);
 
   const addTodo = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +45,11 @@ function App() {
   };
 
   const deleteTodo = (id: number) => {
-    setTodos(todos => todos.filter(todo => todo.id !== id));
+    setRemovingId(id);
+    removeTimeout.current = setTimeout(() => {
+      setTodos(todos => todos.filter(todo => todo.id !== id));
+      setRemovingId(null);
+    }, 300); // match CSS transition duration
   };
 
   const filteredTodos = todos.filter(todo => {
@@ -66,7 +78,12 @@ function App() {
       <ul className="todo-list">
         {filteredTodos.length === 0 && <li className="empty">No tasks</li>}
         {filteredTodos.map(todo => (
-          <li key={todo.id} className={todo.completed ? 'completed' : ''}>
+          <li
+            key={todo.id}
+            className={
+              `${todo.completed ? 'completed' : ''} ${removingId === todo.id ? 'removing' : ''}`.trim()
+            }
+          >
             <span onClick={() => toggleTodo(todo.id)} className="todo-text">{todo.text}</span>
             <button onClick={() => deleteTodo(todo.id)} className="delete-btn">✕</button>
           </li>
